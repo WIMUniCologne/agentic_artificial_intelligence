@@ -24,7 +24,7 @@ This project uses `uv` as the package manager, which provides fast and reliable 
 Make sure that you do have git installed by following this [install git guide](https://github.com/git-guides/install-git).
 
 ```bash
-git clone git clone https://github.com/WIMUniCologne/agentic_artificial_intelligence
+git clone https://github.com/WIMUniCologne/agentic_artificial_intelligence
 ```
 
 #### 2. Install Dependencies with uv
