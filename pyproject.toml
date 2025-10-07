@@ -1,0 +1,158 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agentic_ai"
+version = "0.1.0"
+description = "A Python package for teaching LangGraph-based AI agents"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "Tim Alvaro Ockenga", email = "timockenga@gmail.com"}
+]
+maintainers = [
+    {name = "Tim Alvaro Ockenga", email = "timockenga@gmail.com"}
+]
+keywords = ["ai", "agents", "langchain", "langgraph", "llm", "education", "teaching"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Education",
+    "Intended Audience :: Developers", 
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Education",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+requires-python = ">=3.9"
+dependencies = [
+    "langchain>=0.1.0",
+    "langchain-community>=0.0.20",
+    "langchain-google-genai>=0.0.8",
+    "langchain-openai>=0.0.8",
+    "langgraph>=0.0.40",
+    "google-generativeai>=0.3.0",
+    "openai>=1.0.0",
+    "ollama>=0.1.7",
+    "jupyter>=1.0.0",
+    "ipykernel>=6.20.0",
+    "python-dotenv>=1.0.0",
+    "requests>=2.28.0",
+    "beautifulsoup4>=4.11.0",
+    "pandas>=1.5.0",
+    "numpy>=1.24.0",
+    "transformers>=4.56.2",
+    "gradio-client>=1.3.0",
+    "gradio>=4.44.1",
+    "langchain-ollama>=0.3.8",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "black>=22.0.0",
+    "flake8>=5.0.0",
+    "mypy>=1.0.0",
+    "pre-commit>=3.0.0",
+]
+search = [
+    "tavily-python>=0.3.0",
+    "duckduckgo-search>=3.8.0",
+]
+all = [
+    "agentic_ai[dev,search]",
+]
+
+[project.urls]
+Homepage = "https://github.com/tockenga/agentic_artificial_intelligence"
+Repository = "https://github.com/tockenga/agentic_artificial_intelligence"
+Documentation = "https://github.com/tockenga/agentic_artificial_intelligence/wiki"
+"Bug Tracker" = "https://github.com/tockenga/agentic_artificial_intelligence/issues"
+
+[project.scripts]
+agentic-ai = "agentic_ai.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["agentic_ai*"]
+exclude = ["tests*", "examples*"]
+
+[tool.setuptools.package-data]
+agentic_ai = ["configs/*.json", "examples/*.py", "examples/*.ipynb"]
+
+# Black configuration
+[tool.black]
+line-length = 88
+target-version = ['py38', 'py39', 'py310', 'py311']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+)/
+'''
+
+# Pytest configuration
+[tool.pytest.ini_options]
+minversion = "7.0"
+addopts = "-ra -q --strict-markers --strict-config"
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests",
+    "unit: marks tests as unit tests",
+]
+
+# MyPy configuration
+[tool.mypy]
+python_version = "3.8"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+check_untyped_defs = true
+disallow_untyped_decorators = false
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_equality = true
+
+# Coverage configuration
+[tool.coverage.run]
+source = ["agentic_ai"]
+omit = [
+    "*/tests/*",
+    "*/test_*.py",
+    "*/__pycache__/*",
+    "*/venv/*",
+    "*/.venv/*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+]
