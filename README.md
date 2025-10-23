@@ -2,6 +2,8 @@
 
 This repository contains the course materials and a comprehensive Python package for teaching LangGraph-based AI agents. The project is designed for bachelor's/master's students learning to implement AI agents with proper software architecture.
 
+This project is inspired by the phenomenal [Hugging Face's Agent Course](https://huggingface.co/learn/agents-course) and examples from the LangChain/LangGraph documentation.
+
 ## 🚀 Installation
 
 ### IDE - Integrated Development Environment
