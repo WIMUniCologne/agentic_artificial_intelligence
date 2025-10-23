@@ -68,10 +68,10 @@ all = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/tockenga/agentic_artificial_intelligence"
-Repository = "https://github.com/tockenga/agentic_artificial_intelligence"
-Documentation = "https://github.com/tockenga/agentic_artificial_intelligence/wiki"
-"Bug Tracker" = "https://github.com/tockenga/agentic_artificial_intelligence/issues"
+Homepage = "https://github.com/WIMUniCologne/agentic_artificial_intelligence"
+Repository = "https://github.com/WIMUniCologne/agentic_artificial_intelligence"
+Documentation = "https://github.com/WIMUniCologne/agentic_artificial_intelligence/wiki"
+"Bug Tracker" = "https://github.com/WIMUniCologne/agentic_artificial_intelligence/issues"
 
 [project.scripts]
 agentic-ai = "agentic_ai.cli:main"
