@@ -7,7 +7,7 @@ from langchain_core.language_models import BaseChatModel
 from langchain_core.tools import BaseTool
 from langgraph.graph import StateGraph, END
 from langgraph.prebuilt import ToolNode
-from .base import BaseAgent, State
+from agentic_ai.agents.base import BaseAgent, State
 
 
 class ToolAgent(BaseAgent):
