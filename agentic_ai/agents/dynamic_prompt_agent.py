@@ -4,8 +4,8 @@ Dynamic prompt agent implementation for basic conversational AI.
 
 from typing import Optional
 from datetime import datetime
-from langchain.schema import SystemMessage, HumanMessage
-from langchain.prompts import PromptTemplate
+from langchain_core.messages import SystemMessage, HumanMessage
+from langchain_core.prompts import PromptTemplate
 from langgraph.graph import StateGraph, START, END
 from langgraph.types import Command
 from agentic_ai.agents.base import BaseAgent, State
