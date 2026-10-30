@@ -78,7 +78,10 @@ def load_env_vars(env_file: Path = ENV) -> Dict[str, str]:
     env_vars = []
     relevant_keys = [
         "GOOGLE_API_KEY",
-        "OPENAI_API_KEY", 
+        "OPENAI_API_KEY",
+        "UZK_GPT_URL",
+        "UZK_GPT_API_KEY",
+        "UZK_GPT_MODEL",
         "TAVILY_API_KEY",
         "OPENWEATHER_API_KEY",
         "OLLAMA_BASE_URL"
@@ -94,7 +97,7 @@ def load_env_vars(env_file: Path = ENV) -> Dict[str, str]:
 
 def setup_llm(
     provider: str = "gemini",
-    model: str = "gemini-2.5-flash-lite",
+    model: str = None,
     temperature: float = 0.7,
     **kwargs
 ) -> BaseChatModel:
@@ -102,8 +105,8 @@ def setup_llm(
     Set up a language model for use with agents.
     
     Args:
-        provider: LLM provider ("gemini", "openai", "ollama")
-        model: Specific model name
+        provider: LLM provider ("gemini", "openai", "ollama", "kiconnect")
+        model: Specific model name. Each provider applies its own default when omitted.
         temperature: Temperature for response generation
         **kwargs: Additional arguments for the LLM
         
@@ -112,11 +115,13 @@ def setup_llm(
     """
     load_env_vars()
     if provider.lower() == "gemini":
-        return setup_gemini_llm(model, temperature, **kwargs)
+        return setup_gemini_llm(model or "gemini-3.5-flash-lite", temperature, **kwargs)
     elif provider.lower() == "openai":
         return setup_openai_llm(model, temperature, **kwargs)
     elif provider.lower() == "ollama":
         return setup_ollama_llm(model, temperature, **kwargs)
+    elif provider.lower() in {"kiconnect", "uzk_gpt"}:
+        return setup_kiconnect_llm(model, temperature, **kwargs)
     else:
         raise ValueError(f"Unsupported LLM provider: {provider}")
 
@@ -169,6 +174,48 @@ def setup_openai_llm(
             **kwargs
         )
         
+    except ImportError:
+        raise ImportError("langchain-openai not installed. Run: pip install langchain-openai")
+
+
+def setup_kiconnect_llm(
+    model: str = None,
+    temperature: float = 0.7,
+    **kwargs
+) -> BaseChatModel:
+    """Set up a chat model via KI:connect (https://chat.kiconnect.nrw).
+
+    KI:connect speaks the OpenAI chat-completions API. Credentials come from
+    the environment:
+
+    - ``UZK_GPT_URL``     e.g. ``https://chat.kiconnect.nrw/api/v1``
+    - ``UZK_GPT_API_KEY`` Bearer token
+    - ``UZK_GPT_MODEL``   optional default model id
+    """
+    try:
+        from langchain_openai import ChatOpenAI
+
+        base_url = os.getenv("UZK_GPT_URL")
+        api_key = os.getenv("UZK_GPT_API_KEY")
+        if not base_url or not api_key:
+            raise ValueError(
+                "UZK_GPT_URL and UZK_GPT_API_KEY must be set (see env.example)."
+            )
+
+        default_model = (
+            model
+            or os.getenv("UZK_GPT_MODEL")
+            or "Mistral Small 3.2 24B Instruct 2506"
+        )
+
+        return ChatOpenAI(
+            model=default_model,
+            temperature=temperature,
+            openai_api_key=api_key,
+            base_url=base_url,
+            **kwargs
+        )
+
     except ImportError:
         raise ImportError("langchain-openai not installed. Run: pip install langchain-openai")
 
@@ -235,6 +282,9 @@ def create_project_structure(base_path: str = ".") -> None:
         ".env.example": """# Example environment variables
 GOOGLE_API_KEY=your_gemini_api_key_here
 OPENAI_API_KEY=your_openai_api_key_here
+# Mid model provider (KI:connect)
+UZK_GPT_URL=https://chat.kiconnect.nrw/api/v1
+UZK_GPT_API_KEY=
 TAVILY_API_KEY=your_tavily_api_key_here
 OPENWEATHER_API_KEY=your_openweather_api_key_here
 OLLAMA_BASE_URL=http://localhost:11434
