@@ -161,7 +161,7 @@ if __name__ == "__main__":
     load_dotenv()
 
     # Initialize LLM
-    llm = init_chat_model("gemini-2.5-flash-lite", model_provider="google_genai")
+    llm = init_chat_model("gemini-3.5-flash-lite", model_provider="google_genai")
 
     memory = InMemorySaver()
     
@@ -186,4 +186,4 @@ if __name__ == "__main__":
             print(f"   Tool Calls: {msg.tool_calls}")
         if hasattr(msg, 'tool_call_id'):
             print(f"   Tool Call ID: {msg.tool_call_id}")
-        print(f"   Content: {str(msg.content)[:200]}..." if len(str(msg.content)) > 200 else f"   Content: {msg.content}")
+        print(f"   Content: {msg.text[:200]}..." if len(msg.text) > 200 else f"   Content: {msg.text}")

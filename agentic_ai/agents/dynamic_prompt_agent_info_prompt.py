@@ -120,7 +120,7 @@ if __name__ == "__main__":
     from agentic_ai.prompts.prompts import system_prompt
 
     load_dotenv()
-    llm = init_chat_model("gemini-2.5-flash-lite", model_provider="google_genai")
+    llm = init_chat_model("gemini-3.5-flash-lite", model_provider="google_genai")
     memory = InMemorySaver()
     dynamic_agent = DynamicPromptAgent(llm=llm, name="DynamicAgent", system_prompt=system_prompt, checkpointer=memory)
     dynamic_agent.run("Hello! What is your name and what time is it?", thread_id="test_thread")['messages'][-1].pretty_print()

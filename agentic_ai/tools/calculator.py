@@ -83,7 +83,7 @@ class CalculatorTool(BaseTool):
         return Tool(
             name=self.name,
             description=self.description,
-            func=self.run
+            func=self._run
         )
 
 

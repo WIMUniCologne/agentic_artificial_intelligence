@@ -98,7 +98,7 @@ def load_env_vars(env_file: Path = ENV) -> Dict[str, str]:
 def setup_llm(
     provider: str = "gemini",
     model: str = None,
-    temperature: float = 0.7,
+    temperature: float = None,
     **kwargs
 ) -> BaseChatModel:
     """
@@ -107,28 +107,30 @@ def setup_llm(
     Args:
         provider: LLM provider ("gemini", "openai", "ollama", "kiconnect")
         model: Specific model name. Each provider applies its own default when omitted.
-        temperature: Temperature for response generation
+        temperature: Temperature for response generation. Each provider applies its own default when omitted.
         **kwargs: Additional arguments for the LLM
         
     Returns:
         Configured language model instance
     """
     load_env_vars()
+    if temperature is not None:
+        kwargs["temperature"] = temperature
     if provider.lower() == "gemini":
-        return setup_gemini_llm(model or "gemini-3.5-flash-lite", temperature, **kwargs)
+        return setup_gemini_llm(model, **kwargs)
     elif provider.lower() == "openai":
-        return setup_openai_llm(model, temperature, **kwargs)
+        return setup_openai_llm(model, **kwargs)
     elif provider.lower() == "ollama":
-        return setup_ollama_llm(model, temperature, **kwargs)
+        return setup_ollama_llm(model, **kwargs)
     elif provider.lower() in {"kiconnect", "uzk_gpt"}:
-        return setup_kiconnect_llm(model, temperature, **kwargs)
+        return setup_kiconnect_llm(model, **kwargs)
     else:
         raise ValueError(f"Unsupported LLM provider: {provider}")
 
 
 def setup_gemini_llm(
     model: str = None,
-    temperature: float = 0.7,
+    temperature: float = None,
     **kwargs
 ) -> BaseChatModel:
     """Set up Google Gemini LLM."""
@@ -139,11 +141,14 @@ def setup_gemini_llm(
         if not api_key:
             raise ValueError("GOOGLE_API_KEY environment variable not set")
         
-        default_model = model or "gemini-2.5-flash"
-        
+        default_model = model or "gemini-3.5-flash-lite"
+
+        # gemini-3.5-flash-lite ignores temperature and warns if it is set.
+        if temperature is not None:
+            kwargs["temperature"] = temperature
+
         return ChatGoogleGenerativeAI(
             model=default_model,
-            temperature=temperature,
             google_api_key=api_key,
             **kwargs
         )
@@ -165,7 +170,7 @@ def setup_openai_llm(
         if not api_key:
             raise ValueError("OPENAI_API_KEY environment variable not set")
         
-        default_model = model or "gpt-3.5-turbo"
+        default_model = model or "gpt-4o-mini"
         
         return ChatOpenAI(
             model=default_model,
@@ -205,7 +210,7 @@ def setup_kiconnect_llm(
         default_model = (
             model
             or os.getenv("UZK_GPT_MODEL")
-            or "Mistral Small 3.2 24B Instruct 2506"
+            or "mistral-small-3-2-24b-instruct-2506"
         )
 
         return ChatOpenAI(
@@ -228,10 +233,9 @@ def setup_ollama_llm(
 ) -> BaseChatModel:
     """Set up Ollama LLM."""
     try:
-        from langchain_community.llms import Ollama
-        from langchain_community.chat_models import ChatOllama
-        
-        default_model = model or "llama3"
+        from langchain_ollama import ChatOllama
+
+        default_model = model or "llama3.2"
         default_base_url = base_url or os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
         
         # Use ChatOllama for chat interface
@@ -243,7 +247,7 @@ def setup_ollama_llm(
         )
         
     except ImportError:
-        raise ImportError("langchain-community not installed. Run: pip install langchain-community")
+        raise ImportError("langchain-ollama not installed. Run: pip install langchain-ollama")
 
 
 def create_project_structure(base_path: str = ".") -> None:
