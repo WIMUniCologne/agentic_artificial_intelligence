@@ -43,6 +43,19 @@ class BaseAgent(ABC):
         self.checkpointer = checkpointer # Initialize checkpointer
         self.store = store # Initialize store
         self._build_graph()
+
+    def _is_new_thread(self, config: dict) -> bool:
+        """Return True when this call should start a fresh conversation.
+
+        A checkpointer is optional. Without one, ``run()`` cannot load prior
+        state, so every call is independent. With one, state is kept per
+        ``thread_id`` and only a new thread starts from scratch.
+        """
+        if not self.checkpointer:
+            return True
+
+        snapshot = self.graph.get_state(config)
+        return snapshot is None or not snapshot.values or not snapshot.values.get("messages")
     
     @abstractmethod
     def _build_graph(self) -> None:
@@ -83,9 +96,9 @@ class BaseAgent(ABC):
         if user_id:
             config["configurable"]["user_id"] = user_id
         
-        # Check if this is a new thread or existing thread
-        snapshot = self.graph.get_state(config)
-        is_new_thread = snapshot is None or not snapshot.values or not snapshot.values.get("messages")
+        # Without a checkpointer every call is a new conversation.
+        # With a checkpointer, the same thread_id reloads prior messages.
+        is_new_thread = self._is_new_thread(config)
         
         # Prepare initial messages
         # For new threads, ensure system message is first
@@ -127,9 +140,9 @@ class BaseAgent(ABC):
         if user_id:
             config["configurable"]["user_id"] = user_id
         
-        # Check if this is a new thread or existing thread
-        snapshot = self.graph.get_state(config)
-        is_new_thread = snapshot is None or not snapshot.values or not snapshot.values.get("messages")
+        # Without a checkpointer every call is a new conversation.
+        # With a checkpointer, the same thread_id reloads prior messages.
+        is_new_thread = self._is_new_thread(config)
         
         # Prepare initial messages
         # For new threads, ensure system message is first
@@ -171,9 +184,9 @@ class BaseAgent(ABC):
         if user_id:
             config["configurable"]["user_id"] = user_id
         
-        # Check if this is a new thread or existing thread
-        snapshot = self.graph.get_state(config)
-        is_new_thread = snapshot is None or not snapshot.values or not snapshot.values.get("messages")
+        # Without a checkpointer every call is a new conversation.
+        # With a checkpointer, the same thread_id reloads prior messages.
+        is_new_thread = self._is_new_thread(config)
         
         # Prepare initial messages
         # For new threads, ensure system message is first
@@ -245,6 +258,9 @@ class BaseAgent(ABC):
         Returns:
             List of messages in the conversation
         """
+        if not self.checkpointer:
+            return []
+
         config = {"configurable": {"thread_id": thread_id}}
         snapshot = self.graph.get_state(config)
         if snapshot and snapshot.values:

@@ -57,7 +57,7 @@ _(**Purpose:** To detail the "how" of your project, covering the specific techni
 
 ### 4.1. LLM Selection & Configuration
 
-- **Models Used:** Which LLM(s) did you use? (e.g., `Gemini 2.5 Flash`, `Ollama/llama3:8b`).
+- **Models Used:** Which LLM(s) did you use? (e.g., `Gemini 3.5 Flash-Lite`, `Ollama/llama3.2`).
 - **Justification:** _Why_ did you choose these models? Discuss your reasoning based on:
   - Performance (quality of responses for your task)
   - Speed (latency)

@@ -94,6 +94,9 @@ GOOGLE_API_KEY=your_gemini_api_key_here
 OPENAI_API_KEY=your_openai_api_key_here
 # OR
 OLLAMA_BASE_URL=http://localhost:11434
+# OR KI:connect (https://chat.kiconnect.nrw)
+UZK_GPT_URL=https://chat.kiconnect.nrw/api/v1
+UZK_GPT_API_KEY=your_kiconnect_api_key_here
 
 # Optional: For enhanced tools
 TAVILY_API_KEY=your_tavily_search_key

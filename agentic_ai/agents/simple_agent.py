@@ -61,7 +61,7 @@ if __name__ == "__main__":
 
     load_dotenv()
 
-    llm = init_chat_model("gemini-2.5-flash-lite", model_provider="google_genai")
+    llm = init_chat_model("gemini-3.5-flash-lite", model_provider="google_genai")
     system_prompt = "You are a helpful assistant called TestBot."
     memory = InMemorySaver()
     
@@ -73,6 +73,6 @@ if __name__ == "__main__":
     # Check conversation history
     history = agent.get_conversation_history(thread_id="default")
     for i, msg in enumerate(history):
-        print(f"  {i+1}. {msg.__class__.__name__}: {msg.content}")
+        print(f"  {i+1}. {msg.__class__.__name__}: {msg.text}")
 
     print("\n" + "="*50 + "\n")

@@ -4,8 +4,8 @@ Dynamic prompt agent implementation for basic conversational AI.
 
 from typing import Optional
 from datetime import datetime
-from langchain.schema import SystemMessage, HumanMessage
-from langchain.prompts import PromptTemplate
+from langchain_core.messages import SystemMessage, HumanMessage
+from langchain_core.prompts import PromptTemplate
 from langgraph.graph import StateGraph, START, END
 from langgraph.types import Command
 from agentic_ai.agents.base import BaseAgent, State
@@ -130,7 +130,7 @@ if __name__ == "__main__":
     from agentic_ai.prompts.prompts import system_prompt
 
     load_dotenv()
-    llm = init_chat_model("gemini-2.5-flash-lite", model_provider="google_genai")
+    llm = init_chat_model("gemini-3.5-flash-lite", model_provider="google_genai")
     memory = InMemorySaver()
     dynamic_agent = DynamicPromptAgent(llm=llm, name="DynamicAgent", system_prompt=system_prompt, checkpointer=memory)
     dynamic_agent.run("Hello! What is your name and what time is it?", thread_id="test_thread")['messages'][-1].pretty_print()
